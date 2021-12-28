@@ -1,6 +1,10 @@
+#[allow(dead_code)]
+use log::debug;
+
 use std::{
     path,
     fs,
+    file,
 };
 use fadafada::control::Controller;
 use fadafada::resolver::Resolver;
@@ -9,16 +13,23 @@ use fadafada::yaml::{
     yaml_from_str,
 };
 
+mod fixtures;
+
 #[test]
 fn test_graph_yaml() {
-    let mut yaml_src_path = path::Path::new(".")
+    env_logger::init();
+
+    let t = fixtures::TestSetup::new();
+
+    let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
         .join("query.yaml");
+
     let mut s = fs::read_to_string(&yaml_src_path).unwrap();
     let mut y = yaml_from_str(&s);
     let mut ctrl = Controller::from_yaml(&y, None);
 
-    yaml_src_path = path::Path::new(".")
+    yaml_src_path = path::Path::new(t.path())
         .join("testdata")
         .join("contents.yaml");
     s = fs::read_to_string(&yaml_src_path).unwrap();

@@ -7,8 +7,6 @@ edition = "2021"
 
 [dependencies.fadafada]
 git = "file:///home/lash/src/home/fadafada/fadafada_lib"
-#rev = "3b033a44810804109f000763711dd8582701d5b4"
-#branch = "master"
 features = ["yaml","web2"]
 
 [dependencies.curl]
