@@ -1,0 +1,6 @@
+delay: 200
+timeout: 4000
+sources:
+  - engine: foo
+    endpoints:
+      - url: file:///tmp/fadafada_curl/a

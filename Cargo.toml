@@ -1,0 +1,33 @@
+[package]
+name = "fadafada_curl"
+version = "0.0.0-alpha.1"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.fadafada]
+git = "file:///home/lash/src/home/fadafada/fadafada_lib"
+#rev = "3b033a44810804109f000763711dd8582701d5b4"
+#branch = "master"
+features = ["yaml","web2"]
+
+[dependencies.curl]
+version = "^0.4"
+
+[dependencies.yaml-rust]
+version = "~0.3"
+
+[dependencies.log]
+version = "~0.4"
+
+[dependencies.env_logger]
+version = "~0.9"
+
+[dependencies.clap]
+version = "^2.34"
+
+[dev-dependencies.tempdir]
+version = "^0.3"
+
+[dev-dependencies.url]
+version = "^2.2"
