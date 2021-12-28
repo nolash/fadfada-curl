@@ -5,6 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "fadafada_curl"
+path = "src/lib.rs"
+
 [dependencies.fadafada]
 git = "file:///home/lash/src/home/fadafada/fadafada_lib"
 features = ["yaml","web2"]

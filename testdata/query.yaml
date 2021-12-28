@@ -4,3 +4,6 @@ sources:
   - engine: foo
     endpoints:
       - url: file:///tmp/fadafada_curl/a
+  - engine: bar
+    endpoints:
+      - url: file:///tmp/fadafada_curl/b

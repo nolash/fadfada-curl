@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 use log::debug;
 
 use std::{
@@ -9,12 +8,18 @@ use std::{
 
 use tempdir;
 use url::Url;
-use curl::easy::Easy;
 use env_logger;
+
+use fadafada_curl::retrieve;
+
+pub fn retrieve_url(b: &mut Vec<u8>, retrieve_url: url::Url) {
+    retrieve(b, retrieve_url.as_str());
+}
 
 /// Verify that file scheme resource retrieval works
 #[test]
 fn test_url_get_file() {
+
     env_logger::init();
 
     let tmp_basedir = env::temp_dir();
@@ -32,18 +37,10 @@ fn test_url_get_file() {
     let file_bar_path = resource_basedir
         .join("feedbeef");
     _r = fs::write(&file_bar_path, b"01234578");
-    let file_bar_url = Url::from_file_path(file_bar_path).unwrap();
+    let _file_bar_url = Url::from_file_path(file_bar_path).unwrap();
 
     let mut b = Vec::new();
-    {
-        let mut curl_easy = Easy::new();
-        let mut _rr = curl_easy.url(file_foo_url.as_str()).unwrap();
-        let mut curl_easy_transfer = curl_easy.transfer();
-        curl_easy_transfer.write_function(|data| {
-            b.extend_from_slice(data);
-            Ok(data.len())
-        }).unwrap();
-        _rr = curl_easy_transfer.perform().unwrap();
-    }
+    retrieve_url(&mut b, file_foo_url);
+
     assert_eq!(foo_content, b.as_mut_slice());
 }
