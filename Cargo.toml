@@ -31,12 +31,11 @@ version = "^2.34"
 [dev-dependencies.tempdir]
 version = "^0.3"
 
+[dev-dependencies.hex]
+version = "^0.4"
+
 [dev-dependencies.url]
 version = "^2.2"
 
-[dependencies.sha2]
-version = "^0.10"
-optional = true
-
 [features]
-validate-sha256 = ["sha2"]
+validate-sha256 = []
