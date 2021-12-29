@@ -40,7 +40,6 @@ pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     let mut _rr = curl_easy.url(retrieve_url).unwrap();
     let mut curl_easy_transfer = curl_easy.transfer();
     curl_easy_transfer.write_function(|data| {
-        //b.extend_from_slice(data);
         contents.data.extend_from_slice(data);
         contents.url == retrieve_url.to_string();
         contents.ready = true;
@@ -54,7 +53,6 @@ pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     };
 }
 
-//pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Vec<u8>>) -> Result<Contents, error::NoContentError> {
 pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>) -> Result<Contents, error::NoContentError> {
     let mut have_err = false;
 
@@ -75,8 +73,6 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>)
             _ => {},
         }
 
-        //let mut b: Vec<u8> = Vec::new();
-        //retrieve(&mut b, &v.1);
         let mut contents = Contents::new();
         retrieve(&mut contents, &v.1);
         match tx.send(Some(contents)) {

@@ -126,14 +126,6 @@ fn test_graph_processor_content_first() {
         process_graph(graph, tx);
     });
 
-//    let mut r: Vec<u8>;
-//    loop {
-//        r = rx.recv().unwrap();
-//        if r.len() > 0 {
-//            drop(rx);
-//            break;
-//        }
-//    }
     let mut r: Contents;
     loop {
         match rx.recv().unwrap() {
@@ -199,14 +191,6 @@ fn test_graph_processor_content_second() {
         process_graph(graph, tx);
     });
 
-//    let mut r: Vec<u8>;
-//    loop {
-//        r = rx.recv().unwrap();
-//        if r.len() > 0 {
-//            drop(rx);
-//            break;
-//        }
-//    }
     let mut r: Contents;
     loop {
         match rx.recv().unwrap() {

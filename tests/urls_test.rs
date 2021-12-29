@@ -15,8 +15,6 @@ use fadafada_curl::{
     Contents,
 };
 
-//pub fn retrieve_url(b: &mut Vec<u8>, retrieve_url: url::Url) {
-    //retrieve(b, retrieve_url.as_str());
 pub fn retrieve_url(contents: &mut Contents, retrieve_url: url::Url) {
     retrieve(contents, retrieve_url.as_str());
 }
@@ -43,12 +41,8 @@ fn test_url_get_file() {
     _r = fs::write(&file_bar_path, b"01234578");
     let _file_bar_url = Url::from_file_path(file_bar_path).unwrap();
 
-    //let mut b = Vec::new();
-    //retrieve_url(&mut b, file_foo_url);
-
     let mut content: Contents = Contents::new();
     retrieve_url(&mut content, file_foo_url);
-
 
     assert_eq!(foo_content, content.data.as_mut_slice());
 }
