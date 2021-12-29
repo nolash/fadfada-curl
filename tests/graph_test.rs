@@ -15,7 +15,10 @@ use fadafada::yaml::{
     FromYaml,
     yaml_from_str,
 };
-use fadafada_curl::process_graph;
+use fadafada_curl::{
+    process_graph,
+    Contents,
+};
 
 mod fixtures;
 
@@ -123,17 +126,31 @@ fn test_graph_processor_content_first() {
         process_graph(graph, tx);
     });
 
-    let mut r: Vec<u8>;
+//    let mut r: Vec<u8>;
+//    loop {
+//        r = rx.recv().unwrap();
+//        if r.len() > 0 {
+//            drop(rx);
+//            break;
+//        }
+//    }
+    let mut r: Contents;
     loop {
-        r = rx.recv().unwrap();
-        if r.len() > 0 {
-            drop(rx);
-            break;
-        }
+        match rx.recv().unwrap() {
+            Some(v) => {
+                if v.ready {
+                    r = v;
+                    drop(rx);
+                    break;
+                }
+            },
+            _ => {},
+        };
     }
+
     thr_foo.join();
 
-    assert_eq!(r, b"012345678");
+    assert_eq!(r.data, b"012345678");
 }
 
 
@@ -182,15 +199,29 @@ fn test_graph_processor_content_second() {
         process_graph(graph, tx);
     });
 
-    let mut r: Vec<u8>;
+//    let mut r: Vec<u8>;
+//    loop {
+//        r = rx.recv().unwrap();
+//        if r.len() > 0 {
+//            drop(rx);
+//            break;
+//        }
+//    }
+    let mut r: Contents;
     loop {
-        r = rx.recv().unwrap();
-        if r.len() > 0 {
-            drop(rx);
-            break;
-        }
+        match rx.recv().unwrap() {
+            Some(v) => {
+                if v.ready {
+                    r = v;
+                    drop(rx);
+                    break;
+                }
+            },
+            _ => {},
+        };
     }
+
     thr_foo.join();
 
-    assert_eq!(r, b"123456789");
+    assert_eq!(r.data, b"123456789");
 }

@@ -10,16 +10,20 @@ use tempdir;
 use url::Url;
 use env_logger;
 
-use fadafada_curl::retrieve;
+use fadafada_curl::{
+    retrieve,
+    Contents,
+};
 
-pub fn retrieve_url(b: &mut Vec<u8>, retrieve_url: url::Url) {
-    retrieve(b, retrieve_url.as_str());
+//pub fn retrieve_url(b: &mut Vec<u8>, retrieve_url: url::Url) {
+    //retrieve(b, retrieve_url.as_str());
+pub fn retrieve_url(contents: &mut Contents, retrieve_url: url::Url) {
+    retrieve(contents, retrieve_url.as_str());
 }
 
 /// Verify that file scheme resource retrieval works
 #[test]
 fn test_url_get_file() {
-
     env_logger::init();
 
     let tmp_basedir = env::temp_dir();
@@ -39,8 +43,12 @@ fn test_url_get_file() {
     _r = fs::write(&file_bar_path, b"01234578");
     let _file_bar_url = Url::from_file_path(file_bar_path).unwrap();
 
-    let mut b = Vec::new();
-    retrieve_url(&mut b, file_foo_url);
+    //let mut b = Vec::new();
+    //retrieve_url(&mut b, file_foo_url);
 
-    assert_eq!(foo_content, b.as_mut_slice());
+    let mut content: Contents = Contents::new();
+    retrieve_url(&mut content, file_foo_url);
+
+
+    assert_eq!(foo_content, content.data.as_mut_slice());
 }

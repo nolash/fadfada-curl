@@ -18,12 +18,32 @@ mod error;
 
 mod validator;
 
-pub fn retrieve(b: &mut Vec<u8>, retrieve_url: &str) {
+pub struct Contents {
+    pub ready: bool,
+    pub url: String,
+    pub data: Vec<u8>,
+}
+
+impl Contents {
+    pub fn new() -> Contents {
+        Contents {
+            ready: false,
+            url: "".to_string(),
+            data: vec![],
+        }
+    }
+}
+
+//pub fn retrieve(b: &mut Vec<u8>, retrieve_url: &str) {
+pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     let mut curl_easy = Easy::new();
     let mut _rr = curl_easy.url(retrieve_url).unwrap();
     let mut curl_easy_transfer = curl_easy.transfer();
     curl_easy_transfer.write_function(|data| {
-        b.extend_from_slice(data);
+        //b.extend_from_slice(data);
+        contents.data.extend_from_slice(data);
+        contents.url == retrieve_url.to_string();
+        contents.ready = true;
         Ok(data.len())
     }).unwrap();
     match curl_easy_transfer.perform() {
@@ -34,8 +54,10 @@ pub fn retrieve(b: &mut Vec<u8>, retrieve_url: &str) {
     };
 }
 
-pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Vec<u8>>) -> Result<Vec<u8>, error::NoContentError> {
+//pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Vec<u8>>) -> Result<Contents, error::NoContentError> {
+pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>) -> Result<Contents, error::NoContentError> {
     let mut have_err = false;
+
     graph.for_each(|v| {
         if have_err {
             return;
@@ -44,7 +66,7 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Vec<u8>>) -> Resul
         let req_delay = time::Duration::from_millis(v.0);
         sleep(req_delay);
         
-        match tx.send(vec![]) {
+        match tx.send(None) {
             Err(_e) => {
                 have_err = true;
                 info!("termination detected");
@@ -53,9 +75,11 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Vec<u8>>) -> Resul
             _ => {},
         }
 
-        let mut b: Vec<u8> = Vec::new();
-        retrieve(&mut b, &v.1);
-        match tx.send(b) {
+        //let mut b: Vec<u8> = Vec::new();
+        //retrieve(&mut b, &v.1);
+        let mut contents = Contents::new();
+        retrieve(&mut contents, &v.1);
+        match tx.send(Some(contents)) {
             Err(e) => {
                 debug!("send error: {:?}", e);
                 have_err = true;

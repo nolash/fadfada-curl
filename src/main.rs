@@ -24,7 +24,10 @@ use fadafada::yaml::{
 use fadafada::control::Controller;
 use fadafada::resolver::Resolver;
 
-use fadafada_curl::process_graph;
+use fadafada_curl::{
+    process_graph,
+    Contents,
+};
 
 
 fn main() {
@@ -60,14 +63,19 @@ fn main() {
         let _r = process_graph(graph, tx);
     });
 
-    let mut r: Vec<u8>;
+    let mut r: Contents;
     loop {
-        r = rx.recv().unwrap();
-        if r.len() > 0 {
-            drop(rx);
-            break;
-        }
+        match rx.recv().unwrap() {
+            Some(v) => {
+                if v.ready {
+                    r = v;
+                    drop(rx);
+                    break;
+                }
+            },
+            _ => {},
+        };
     }
 
-    io::stdout().write_all(r.as_slice());
+    io::stdout().write_all(r.data.as_slice());
 }
