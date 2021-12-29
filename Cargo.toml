@@ -1,6 +1,6 @@
 [package]
 name = "fadafada_curl"
-version = "0.0.0-alpha.1"
+version = "0.0.1-alpha.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,7 +10,7 @@ name = "fadafada_curl"
 path = "src/lib.rs"
 
 [dependencies.fadafada]
-git = "file:///home/lash/src/home/fadafada/fadafada_lib"
+git = "https://gitlab.com/nolash/fadafada"
 features = ["yaml","web2"]
 
 [dependencies.curl]
@@ -33,3 +33,10 @@ version = "^0.3"
 
 [dev-dependencies.url]
 version = "^2.2"
+
+[dependencies.sha2]
+version = "^0.10"
+optional = true
+
+[features]
+validate-sha256 = ["sha2"]

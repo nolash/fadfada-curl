@@ -16,6 +16,7 @@ use fadafada::control::graph::ControllerGraph;
 
 mod error;
 
+mod validator;
 
 pub fn retrieve(b: &mut Vec<u8>, retrieve_url: &str) {
     let mut curl_easy = Easy::new();
