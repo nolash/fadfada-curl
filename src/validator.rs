@@ -1,4 +1,9 @@
+use log::info;
+
+use std::path;
 use std::collections::HashMap;
+
+use hex;
 
 use fadafada::source::Engine;
 use fadafada::validator::Validator;
@@ -30,11 +35,20 @@ impl ValidatorCollection {
             _ => {},
         }
         self.validator.insert(engine.clone(), validator);
+        info!("added validator for engine {}", engine);
     }
 
     pub fn get(&self, engine: &Engine) -> &dyn Validator {
         let v = self.validator.get(engine).unwrap(); 
         return v.as_ref();
+    }
+
+    pub fn verify_by_pointer(&self, engine: &Engine, pointer: &String, content: &Vec<u8>) -> bool {
+        let validator = self.get(engine);
+        let pointer_bytes = hex::decode(pointer).unwrap();
+        let content_bytes = content.to_vec();
+
+        return validator.verify(&pointer_bytes, Some(&content_bytes), None);
     }
 }
 

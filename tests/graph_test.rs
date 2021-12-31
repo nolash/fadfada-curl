@@ -137,6 +137,7 @@ fn test_graph_processor_content_first() {
     thr_foo.join().unwrap();
 
     assert_eq!(r.data, b"012345678");
+    assert_eq!(r.engine, "foo");
 }
 
 
@@ -202,4 +203,5 @@ fn test_graph_processor_content_second() {
     thr_foo.join().unwrap();
 
     assert_eq!(r.data, b"123456789");
+    assert_eq!(r.engine, "bar");
 }

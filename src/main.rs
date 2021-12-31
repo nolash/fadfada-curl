@@ -1,6 +1,7 @@
 use log::{
     debug,
-    warn
+    warn,
+    error,
 };
 use std::{
     fs,
@@ -35,6 +36,7 @@ fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>
         return;
     }
     for v in plugins.iter() {
+        let mut r: bool = false;
         match *v {
             "sha256" => {
                 #[cfg(feature = "sha256")]
@@ -42,6 +44,10 @@ fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>
                     let engine = v.to_string();
                     use fadafada::web2::Sha256ImmutableValidator;
                     validators.insert(engine, Box::new(Sha256ImmutableValidator{}));
+                    r = true;
+                }
+                if !r {
+                    panic!("Unknown plugin {}", v);
                 }
             },
             _ => {
@@ -97,7 +103,7 @@ fn main() {
     let resolver_y = yaml_from_str(&resolver_s);
     let resolver = Resolver::from_yaml(&resolver_y, None);
 
-    let graph = ctrl.generate(resolver);
+    let graph = ctrl.generate(&resolver);
 
     let (tx, rx) = mpsc::channel();
     thread::spawn(|| {
@@ -109,9 +115,20 @@ fn main() {
         match rx.recv().unwrap() {
             Some(v) => {
                 if v.ready {
-                    r = v;
-                    drop(rx);
-                    break;
+                    debug!("checking pointer for {}", v.engine);
+                    match resolver.pointer_for(&v.engine) {
+                        Ok(pointer) => {
+                            if validators.verify_by_pointer(&v.engine, &pointer, &v.data) {
+                                r = v;
+                                drop(rx);
+                                break;
+                            }
+                        },
+                        _ => {
+                            continue;
+                        },
+                    }
+                    error!("Invalid content for url {} engine {}", v.url, v.engine);
                 }
             },
             _ => {},

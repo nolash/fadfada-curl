@@ -12,6 +12,7 @@ use log::{
 use curl::easy::Easy;
 
 use fadafada::control::graph::ControllerGraph;
+use fadafada::source::Engine;
 
 mod error;
 
@@ -20,6 +21,7 @@ pub mod validator;
 pub struct Contents {
     pub ready: bool,
     pub url: String,
+    pub engine: Engine,
     pub data: Vec<u8>,
 }
 
@@ -28,6 +30,7 @@ impl Contents {
         Contents {
             ready: false,
             url: "".to_string(),
+            engine: "".to_string(),
             data: vec![],
         }
     }
@@ -74,6 +77,7 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>)
 
         let mut contents = Contents::new();
         retrieve(&mut contents, &v.1);
+        contents.engine = v.2;
         match tx.send(Some(contents)) {
             Err(e) => {
                 debug!("send error: {:?}", e);
