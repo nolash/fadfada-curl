@@ -1,4 +1,7 @@
-use log::debug;
+use log::{
+    debug,
+    warn
+};
 use std::{
     fs,
     io,
@@ -27,6 +30,10 @@ use fadafada_curl::validator::ValidatorCollection;
 
 
 fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>) {
+    if plugins.len() == 0 {
+        warn!("no validator plugins detected");
+        return;
+    }
     for v in plugins.iter() {
         match *v {
             "sha256" => {
@@ -37,7 +44,9 @@ fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>
                     validators.insert(engine, Box::new(Sha256ImmutableValidator{}));
                 }
             },
-            _ => {},
+            _ => {
+                panic!("Unknown plugin {}", v);
+            },
         };
     }
 }
@@ -56,11 +65,27 @@ fn main() {
              .value_name("YAML configuration file defining the control graph")
              .takes_value(true)
              )
+        .arg(clap::Arg::with_name("validators")
+             .long("with-validator")
+             .value_name("Add given validator engine")
+             .multiple(true)
+             .takes_value(true)
+             )
         .arg(clap::Arg::with_name("contents"))
         .get_matches();
 
     let mut validators = ValidatorCollection::new();
-    register_plugins(&mut validators, vec!["sha256"]);
+    let mut plugins: Vec<&str> = vec![];
+    match m.values_of("validators") {
+        Some(plugin_validators) => {
+            debug!("have plugin validators {:?}", plugin_validators);
+            for plugin in plugin_validators {
+                plugins.push(plugin);
+            }
+        },
+        _ => {},
+    }
+    register_plugins(&mut validators, plugins);
 
     let config_src_path = m.value_of("ctrl").unwrap();
     let config_s = fs::read_to_string(&config_src_path).unwrap();
