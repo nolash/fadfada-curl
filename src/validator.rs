@@ -15,15 +15,38 @@ impl ValidatorCollection {
             validator: HashMap::new(),
         }
     }
+
+    pub fn insert(&mut self, engine: Engine, validator: Box<dyn Validator>) {
+        match self.validator.get(&engine) {
+            Some(_) => {
+                panic!("validator for engine {} already exists", engine);
+            },
+            _ => {},
+        }
+        match self.default {
+            None => {
+                self.default = Some(engine.clone());
+            },
+            _ => {},
+        }
+        self.validator.insert(engine.clone(), validator);
+    }
+
+    pub fn get(&self, engine: &Engine) -> &dyn Validator {
+        let v = self.validator.get(engine).unwrap(); 
+        return v.as_ref();
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use hex;
+    use env_logger;
+
     use fadafada::validator::Validator;
     use fadafada::web2::Sha256ImmutableValidator;
-    use hex;
 
-    use env_logger;
+    use super::ValidatorCollection;
 
     const HASH_OF_FOO: &str = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
 
@@ -35,7 +58,14 @@ mod tests {
         let content_digest = hex::decode(HASH_OF_FOO).unwrap();
        
         let sha256_validator = Sha256ImmutableValidator{};
-        let r = sha256_validator.verify(&content_digest, Some(&content), None);
+    
+        let engine = "sha256".to_string();
+        let mut collection = ValidatorCollection::new();
+        collection.insert(engine.clone(), Box::new(sha256_validator));
+
+        let sha256_validator_retrieved = collection.get(&engine);
+        let r = sha256_validator_retrieved.verify(&content_digest, Some(&content), None);
+
         assert!(r);
     }
 }

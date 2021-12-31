@@ -8,7 +8,6 @@ use log::{
     debug,
     info,
     warn,
-    error,
 };
 use curl::easy::Easy;
 
@@ -16,7 +15,7 @@ use fadafada::control::graph::ControllerGraph;
 
 mod error;
 
-mod validator;
+pub mod validator;
 
 pub struct Contents {
     pub ready: bool,
@@ -41,19 +40,19 @@ pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     let mut curl_easy_transfer = curl_easy.transfer();
     curl_easy_transfer.write_function(|data| {
         contents.data.extend_from_slice(data);
-        contents.url == retrieve_url.to_string();
+        contents.url = retrieve_url.to_string();
         contents.ready = true;
         Ok(data.len())
     }).unwrap();
     match curl_easy_transfer.perform() {
-        Err(e) => {
+        Err(_e) => {
             warn!("could not retrieve {}", retrieve_url);
         },
         _ => {},
     };
 }
 
-pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>) -> Result<Contents, error::NoContentError> {
+pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>) { //-> Result<Contents, error::NoContentError> {
     let mut have_err = false;
 
     graph.for_each(|v| {
@@ -83,5 +82,5 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>)
             _ => {},
         }
     });
-    Err(error::NoContentError{})
+    //Err(error::NoContentError{})
 }

@@ -1,5 +1,5 @@
+use log::debug;
 use std::{
-    env,
     fs,
     io,
     thread,
@@ -9,12 +9,6 @@ use std::io::{
 };
 use std::sync::mpsc;
 
-use log::{
-    debug,
-    info,
-    warn,
-    error,
-};
 use clap;
 
 use fadafada::yaml::{
@@ -23,11 +17,30 @@ use fadafada::yaml::{
 };
 use fadafada::control::Controller;
 use fadafada::resolver::Resolver;
+use fadafada::source::Engine;
 
 use fadafada_curl::{
     process_graph,
     Contents,
 };
+use fadafada_curl::validator::ValidatorCollection;
+
+
+fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>) {
+    for v in plugins.iter() {
+        match *v {
+            "sha256" => {
+                #[cfg(feature = "sha256")]
+                {
+                    let engine = v.to_string();
+                    use fadafada::web2::Sha256ImmutableValidator;
+                    validators.insert(engine, Box::new(Sha256ImmutableValidator{}));
+                }
+            },
+            _ => {},
+        };
+    }
+}
 
 
 fn main() {
@@ -46,6 +59,9 @@ fn main() {
         .arg(clap::Arg::with_name("contents"))
         .get_matches();
 
+    let mut validators = ValidatorCollection::new();
+    register_plugins(&mut validators, vec!["sha256"]);
+
     let config_src_path = m.value_of("ctrl").unwrap();
     let config_s = fs::read_to_string(&config_src_path).unwrap();
     let config_y = yaml_from_str(&config_s);
@@ -63,7 +79,7 @@ fn main() {
         let _r = process_graph(graph, tx);
     });
 
-    let mut r: Contents;
+    let r: Contents;
     loop {
         match rx.recv().unwrap() {
             Some(v) => {
@@ -77,5 +93,5 @@ fn main() {
         };
     }
 
-    io::stdout().write_all(r.data.as_slice());
+    let _r = io::stdout().write_all(r.data.as_slice());
 }

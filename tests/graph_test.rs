@@ -7,7 +7,6 @@ use std::{
 use std::sync::mpsc;
 
 use log::debug;
-use url::Url;
 
 use fadafada::control::Controller;
 use fadafada::resolver::Resolver;
@@ -75,12 +74,7 @@ fn test_graph_processor_nocontent() {
 
     let (tx, _rx) = mpsc::channel();
     drop(_rx);
-    match process_graph(graph, tx) {
-        Ok(_) => {
-            panic!("expected error");
-        },
-        _ => {},
-    }
+    process_graph(graph, tx);
 }
 
 #[test]
@@ -102,7 +96,7 @@ fn test_graph_processor_content_first() {
         panic!("resource path {:?} already exists, please remove it manually", file_foo_path);
     }
     let mut _r = fs::write(&file_foo_path, &foo_content);
-    let file_foo_url = Url::from_file_path(&file_foo_path).unwrap();
+    //let file_foo_url = Url::from_file_path(&file_foo_path).unwrap();
 
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
@@ -126,7 +120,7 @@ fn test_graph_processor_content_first() {
         process_graph(graph, tx);
     });
 
-    let mut r: Contents;
+    let r: Contents;
     loop {
         match rx.recv().unwrap() {
             Some(v) => {
@@ -140,7 +134,7 @@ fn test_graph_processor_content_first() {
         };
     }
 
-    thr_foo.join();
+    thr_foo.join().unwrap();
 
     assert_eq!(r.data, b"012345678");
 }
@@ -167,7 +161,7 @@ fn test_graph_processor_content_second() {
     let foo_content = b"123456789";
 
     let mut _r = fs::write(&file_foo_path, &foo_content);
-    let file_foo_url = Url::from_file_path(&file_foo_path).unwrap();
+    //let file_foo_url = Url::from_file_path(&file_foo_path).unwrap();
 
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
@@ -191,7 +185,7 @@ fn test_graph_processor_content_second() {
         process_graph(graph, tx);
     });
 
-    let mut r: Contents;
+    let r: Contents;
     loop {
         match rx.recv().unwrap() {
             Some(v) => {
@@ -205,7 +199,7 @@ fn test_graph_processor_content_second() {
         };
     }
 
-    thr_foo.join();
+    thr_foo.join().unwrap();
 
     assert_eq!(r.data, b"123456789");
 }
