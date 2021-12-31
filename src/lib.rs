@@ -1,8 +1,11 @@
-use std::time;
-use std::sync::mpsc;
+use std::{
+    time,
+    thread,
+};
 use std::thread::{
     sleep,
 };
+use std::sync::mpsc;
 
 use log::{
     debug,
@@ -55,18 +58,20 @@ pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     };
 }
 
-pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>) { //-> Result<Contents, error::NoContentError> {
+pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Contents>) { //-> Result<Contents, error::NoContentError> {
     let mut have_err = false;
+
 
     graph.for_each(|v| {
         if have_err {
             return;
         }
-        debug!("processing graph entry {:?} delay {:?}", v.1, v.0);
         let req_delay = time::Duration::from_millis(v.0);
         sleep(req_delay);
-        
-        match tx.send(None) {
+        debug!("processing graph entry {:?} delay {:?}", v.1, v.0);
+  
+        let no_content = Contents::new();
+        match tx.send(no_content) {
             Err(_e) => {
                 have_err = true;
                 info!("termination detected");
@@ -75,16 +80,18 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Option<Contents>>)
             _ => {},
         }
 
-        let mut contents = Contents::new();
-        retrieve(&mut contents, &v.1);
-        contents.engine = v.2;
-        match tx.send(Some(contents)) {
-            Err(e) => {
-                debug!("send error: {:?}", e);
-                have_err = true;
-            },
-            _ => {},
-        }
+        let tx_sender = tx.clone();
+        let _r = thread::spawn(move || {
+            let mut contents = Contents::new();
+            retrieve(&mut contents, &v.1);
+            contents.engine = v.2;
+            match tx_sender.send(contents) {
+                Err(e) => {
+                    debug!("send error: {:?}", e);
+                },
+                _ => {},
+            }
+        });
     });
     //Err(error::NoContentError{})
 }

@@ -43,7 +43,7 @@ fn test_graph_yaml() {
     y = yaml_from_str(&s);
 
     let resolver = Resolver::from_yaml(&y, None);
-    let mut graph = ctrl.generate(resolver);
+    let mut graph = ctrl.generate(&resolver);
     let r = graph.next().unwrap();
     assert_eq!(0, r.0);
     assert_eq!("file:///tmp/fadafada_curl/a/deadbeef", r.1);
@@ -70,7 +70,7 @@ fn test_graph_processor_nocontent() {
     y = yaml_from_str(&s);
 
     let resolver = Resolver::from_yaml(&y, None);
-    let graph = ctrl.generate(resolver);
+    let graph = ctrl.generate(&resolver);
 
     let (tx, _rx) = mpsc::channel();
     drop(_rx);
@@ -113,7 +113,7 @@ fn test_graph_processor_content_first() {
     y = yaml_from_str(&s);
 
     let resolver = Resolver::from_yaml(&y, None);
-    let graph = ctrl.generate(resolver);
+    let graph = ctrl.generate(&resolver);
 
     let (tx, rx) = mpsc::channel();
     let thr_foo = thread::spawn(|| {
@@ -122,16 +122,12 @@ fn test_graph_processor_content_first() {
 
     let r: Contents;
     loop {
-        match rx.recv().unwrap() {
-            Some(v) => {
-                if v.ready {
-                    r = v;
-                    drop(rx);
-                    break;
-                }
-            },
-            _ => {},
-        };
+        let v = rx.recv().unwrap();
+        if v.ready {
+            r = v;
+            drop(rx);
+            break;
+        }
     }
 
     thr_foo.join().unwrap();
@@ -179,7 +175,7 @@ fn test_graph_processor_content_second() {
     y = yaml_from_str(&s);
 
     let resolver = Resolver::from_yaml(&y, None);
-    let graph = ctrl.generate(resolver);
+    let graph = ctrl.generate(&resolver);
 
     let (tx, rx) = mpsc::channel();
     let thr_foo = thread::spawn(|| {
@@ -188,16 +184,12 @@ fn test_graph_processor_content_second() {
 
     let r: Contents;
     loop {
-        match rx.recv().unwrap() {
-            Some(v) => {
-                if v.ready {
-                    r = v;
-                    drop(rx);
-                    break;
-                }
-            },
-            _ => {},
-        };
+        let v = rx.recv().unwrap();
+        if v.ready {
+            r = v;
+            drop(rx);
+            break;
+        }
     }
 
     thr_foo.join().unwrap();

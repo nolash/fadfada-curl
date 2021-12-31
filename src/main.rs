@@ -112,27 +112,23 @@ fn main() {
 
     let r: Contents;
     loop {
-        match rx.recv().unwrap() {
-            Some(v) => {
-                if v.ready {
-                    debug!("checking pointer for {}", v.engine);
-                    match resolver.pointer_for(&v.engine) {
-                        Ok(pointer) => {
-                            if validators.verify_by_pointer(&v.engine, &pointer, &v.data) {
-                                r = v;
-                                drop(rx);
-                                break;
-                            }
-                        },
-                        _ => {
-                            continue;
-                        },
+        let v = rx.recv().unwrap();
+        if v.ready {
+            debug!("checking data from url {} with engine {}", v.url, v.engine);
+            match resolver.pointer_for(&v.engine) {
+                Ok(pointer) => {
+                    if validators.verify_by_pointer(&v.engine, &pointer, &v.data) {
+                        r = v;
+                        drop(rx);
+                        break;
                     }
-                    error!("Invalid content for url {} engine {}", v.url, v.engine);
-                }
-            },
-            _ => {},
-        };
+                },
+                _ => {
+                    continue;
+                },
+            }
+            error!("Invalid content for url {} engine {}", v.url, v.engine);
+        }
     }
 
     let _r = io::stdout().write_all(r.data.as_slice());
