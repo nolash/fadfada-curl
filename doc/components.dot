@@ -1,0 +1,31 @@
+digraph {
+	query [ label="query"; shape="box" ];
+	result [ label="result"; shape="box" ];
+	contents [ label="contents"; shape="ellipse"; ];
+	validator_collection [ label="validator collection"; shape="ellipse" ];
+	validator [ label="validator"; shape="ellipse" ];
+
+	control_graph [ label="graph"; shape="ellipse" ];
+	resolver_item [ label="resolver item"; shape="ellipse" ];
+	resolver [ label="resolver"; shape="ellipse" ];
+	control [ label="control"; shape="ellipse" ];
+	source [ label="source"; shape="ellipse" ];
+	endpoint [ label="endpoint"; shape="ellipse" ];
+	engine [ label="engine"; shape="ellipse" ];
+	timing [ label="timing"; shape="ellipse" ];
+
+	validator_collection -> result;
+	resolver -> validator -> validator_collection;
+	validator -> validator_collection;
+	contents -> validator_collection; 
+
+	control_graph -> query -> contents [ style="dashed" ];
+	resolver_item -> resolver;
+	resolver_item -> resolver -> control_graph;
+	control -> control_graph;
+	engine -> source;
+	endpoint -> source -> control;
+	endpoint -> source -> control;
+	timing -> source;
+	timing -> control;
+}
