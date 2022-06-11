@@ -31,7 +31,7 @@ version = "^2.34"
 [dev-dependencies.tempdir]
 version = "^0.3"
 
-[dev-dependencies.hex]
+[dependencies.hex]
 version = "^0.4"
 
 [dev-dependencies.url]
