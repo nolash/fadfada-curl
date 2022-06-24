@@ -8,13 +8,13 @@ use std::sync::mpsc;
 
 use log::debug;
 
-use fadafada::control::Controller;
-use fadafada::resolver::Resolver;
-use fadafada::yaml::{
+use fadfada::control::Controller;
+use fadfada::resolver::Resolver;
+use fadfada::yaml::{
     FromYaml,
     yaml_from_str,
 };
-use fadafada_curl::{
+use fadfada_curl::{
     process_graph,
     Contents,
 };
@@ -46,7 +46,7 @@ fn test_graph_yaml() {
     let mut graph = ctrl.generate(&resolver);
     let r = graph.next().unwrap();
     assert_eq!(0, r.0);
-    assert_eq!("file:///tmp/fadafada_curl/a/deadbeef", r.1);
+    assert_eq!("file:///tmp/fadfada_curl/a/deadbeef", r.1);
 }
 
 #[test]
@@ -85,7 +85,7 @@ fn test_graph_processor_content_first() {
 
     let tmp_basedir = env::temp_dir();
     let resource_basedir = path::Path::new(&tmp_basedir)
-        .join("fadafada_curl/a/");
+        .join("fadfada_curl/a/");
     fs::create_dir_all(&resource_basedir).unwrap();
 
     let file_foo_path = resource_basedir
@@ -145,7 +145,7 @@ fn test_graph_processor_content_second() {
 
     let tmp_basedir = env::temp_dir();
     let resource_basedir = path::Path::new(&tmp_basedir)
-        .join("fadafada_curl/b/");
+        .join("fadfada_curl/b/");
 
     fs::create_dir_all(&resource_basedir).unwrap();
 

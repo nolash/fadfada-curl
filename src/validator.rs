@@ -5,8 +5,8 @@ use std::collections::HashMap;
 
 use hex;
 
-use fadafada::source::Engine;
-use fadafada::validator::Validator;
+use fadfada::source::Engine;
+use fadfada::validator::Validator;
 
 pub struct ValidatorCollection {
     default: Option<Engine>,
@@ -57,8 +57,8 @@ mod tests {
     use hex;
     use env_logger;
 
-    use fadafada::validator::Validator;
-    use fadafada::web2::Sha256ImmutableValidator;
+    use fadfada::validator::Validator;
+    use fadfada::web2::Sha256ImmutableValidator;
 
     use super::ValidatorCollection;
 

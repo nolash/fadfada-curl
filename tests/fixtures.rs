@@ -19,7 +19,7 @@ impl TestSetup {
 
         let tmp_basedir = env::temp_dir();
         let resource_basedir = path::Path::new(&tmp_basedir)
-            .join("fadafada_curl");
+            .join("fadfada_curl");
 
         let resource_path = resource_basedir.as_path();
         let _r = fs::remove_dir_all(&resource_path);

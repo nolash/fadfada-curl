@@ -10,7 +10,7 @@ use tempdir;
 use url::Url;
 use env_logger;
 
-use fadafada_curl::{
+use fadfada_curl::{
     retrieve,
     Contents,
 };
@@ -26,9 +26,9 @@ fn test_url_get_file() {
 
     let tmp_basedir = env::temp_dir();
     let resource_basedir = path::Path::new(&tmp_basedir)
-        .join("fadafada_curl");
+        .join("fadfada_curl");
     fs::create_dir_all(&resource_basedir).unwrap();
-    let _t = tempdir::TempDir::new("fadafada_curl/");
+    let _t = tempdir::TempDir::new("fadfada_curl/");
 
     let file_foo_path = resource_basedir
         .join("deadbeef");

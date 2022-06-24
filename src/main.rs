@@ -15,19 +15,19 @@ use std::sync::mpsc;
 
 use clap;
 
-use fadafada::yaml::{
+use fadfada::yaml::{
     FromYaml,
     yaml_from_str,
 };
-use fadafada::control::Controller;
-use fadafada::resolver::Resolver;
-use fadafada::source::Engine;
+use fadfada::control::Controller;
+use fadfada::resolver::Resolver;
+use fadfada::source::Engine;
 
-use fadafada_curl::{
+use fadfada_curl::{
     process_graph,
     Contents,
 };
-use fadafada_curl::validator::ValidatorCollection;
+use fadfada_curl::validator::ValidatorCollection;
 
 
 fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>) {
@@ -42,7 +42,7 @@ fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>
                 #[cfg(feature = "sha256")]
                 {
                     let engine = v.to_string();
-                    use fadafada::web2::Sha256ImmutableValidator;
+                    use fadfada::web2::Sha256ImmutableValidator;
                     validators.insert(engine, Box::new(Sha256ImmutableValidator{}));
                     r = true;
                 }
@@ -63,7 +63,7 @@ fn main() {
     env_logger::init();
 
     // Parse cli args
-    let m = clap::App::new("fadafada-curl")
+    let m = clap::App::new("fadfada-curl")
         .version("0.0.0")
         .arg(clap::Arg::with_name("ctrl")
              .long("ctrl")

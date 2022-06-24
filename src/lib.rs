@@ -14,8 +14,8 @@ use log::{
 };
 use curl::easy::Easy;
 
-use fadafada::control::graph::ControllerGraph;
-use fadafada::source::Engine;
+use fadfada::control::graph::ControllerGraph;
+use fadfada::source::Engine;
 
 mod error;
 
