@@ -104,16 +104,39 @@ fn main() {
     let resolver = Resolver::from_yaml(&resolver_y, None);
 
     let graph = ctrl.generate(&resolver);
+    let graph_len = graph.len();
+    debug!("have {} items in graph", graph_len);
 
     let (tx, rx) = mpsc::channel();
     thread::spawn(|| {
         let _r = process_graph(graph, tx);
     });
 
-    let r: Contents;
+    let mut r: Contents = Contents::new();
+    let mut i: usize = 0;
+    let mut active = true;
     loop {
-        let v = rx.recv().unwrap();
+        if !active {
+            break;
+        }
+        let v = match rx.recv() { 
+            Ok(v) => {
+                if v.engine == "" {
+                    continue;
+                }
+                v
+            },
+            Err(e) => {
+                error!("receive error from threads {:?}", e); 
+                if i == graph_len {
+                    active = false;
+                }
+                continue;
+            }
+        };
+        i += 1;
         if v.ready {
+            i += 1;
             debug!("checking data from url {} with engine {}", v.url, v.engine);
             match resolver.pointer_for(&v.engine) {
                 Ok(pointer) => {

@@ -10,7 +10,8 @@ name = "fadfada_curl"
 path = "src/lib.rs"
 
 [dependencies.fadfada]
-git = "https://git.defalsify.org/fadfada"
+git = "git://git.defalsify.org/fadfada"
+branch = "lash/wasm"
 features = ["yaml","web2"]
 
 [dependencies.curl]

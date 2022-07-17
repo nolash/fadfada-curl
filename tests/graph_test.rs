@@ -30,7 +30,7 @@ fn test_graph_yaml() {
 
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
-        .join("query.yaml");
+        .join("control.yaml");
 
     let mut s = fs::read_to_string(&yaml_src_path).unwrap();
     let mut y = yaml_from_str(&s);
@@ -46,7 +46,7 @@ fn test_graph_yaml() {
     let mut graph = ctrl.generate(&resolver);
     let r = graph.next().unwrap();
     assert_eq!(0, r.0);
-    assert_eq!("file:///tmp/fadfada_curl/a/deadbeef", r.1);
+    assert_eq!("file:///tmp/fadfada_curl/a/2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae", r.1);
 }
 
 #[test]
@@ -57,7 +57,7 @@ fn test_graph_processor_nocontent() {
  
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
-        .join("query.yaml");
+        .join("control.yaml");
 
     let mut s = fs::read_to_string(&yaml_src_path).unwrap();
     let mut y = yaml_from_str(&s);
@@ -100,7 +100,7 @@ fn test_graph_processor_content_first() {
 
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
-        .join("query.yaml");
+        .join("control.yaml");
 
     let mut s = fs::read_to_string(&yaml_src_path).unwrap();
     let mut y = yaml_from_str(&s);
@@ -132,8 +132,8 @@ fn test_graph_processor_content_first() {
 
     thr_foo.join().unwrap();
 
-    assert_eq!(r.data, b"012345678");
-    assert_eq!(r.engine, "foo");
+    assert_eq!(r.data, b"123456789");
+    assert_eq!(r.engine, "bar");
 }
 
 
@@ -162,7 +162,7 @@ fn test_graph_processor_content_second() {
 
     let mut yaml_src_path = path::Path::new(t.path())
         .join("testdata")
-        .join("query.yaml");
+        .join("control.yaml");
 
     let mut s = fs::read_to_string(&yaml_src_path).unwrap();
     let mut y = yaml_from_str(&s);
@@ -194,6 +194,7 @@ fn test_graph_processor_content_second() {
 
     thr_foo.join().unwrap();
 
+    //assert_eq!(r.data, b"123456789");
     assert_eq!(r.data, b"123456789");
     assert_eq!(r.engine, "bar");
 }

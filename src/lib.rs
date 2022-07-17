@@ -34,7 +34,7 @@ impl Contents {
             ready: false,
             url: "".to_string(),
             engine: "".to_string(),
-            data: vec![],
+            data: vec!(),
         }
     }
 }
