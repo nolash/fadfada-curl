@@ -1,3 +1,19 @@
+//! This crate provides a CLI interface to the [fadfada](fadfada) HTTP request multiplexer. 
+//!
+//! The request structure is defined by providing two yaml files, as described in
+//! [fadfada::yaml](fadfada::yaml).
+//!
+//! On successful retrieval, the data retrieved will be written to standard output.
+//!
+//! # Content validation
+//!
+//! `fadfada_curl` optionally performs validation of the content. Currently only a `sha256`
+//! validator is implemented, and it will verify that the content reference (in hex) for
+//! the data is the sha256 sum of the content retrieved. This feature is only available if built
+//! with the `sha256` feature, and the command is run with the `--with-validator=sha256` option.
+//!
+//! If no validator is specified, the default "noop" validator will be used, which performs no
+//! content checking.
 use std::{
     time,
     thread,

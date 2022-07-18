@@ -2,6 +2,7 @@
 name = "fadfada_curl"
 version = "0.0.1-alpha.1"
 edition = "2021"
+rust-version = "1.56"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,7 +12,7 @@ path = "src/lib.rs"
 
 [dependencies.fadfada]
 git = "git://git.defalsify.org/fadfada"
-branch = "lash/wasm"
+#branch = "lash/wasm"
 features = ["yaml","web2"]
 
 [dependencies.curl]
