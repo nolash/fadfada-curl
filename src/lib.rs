@@ -58,7 +58,7 @@ pub fn retrieve(contents: &mut Contents, retrieve_url: &str) {
     };
 }
 
-pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Contents>) { //-> Result<Contents, error::NoContentError> {
+pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Contents>) {
     let mut have_err = false;
 
 
@@ -93,5 +93,4 @@ pub fn process_graph(graph: ControllerGraph, tx: mpsc::Sender<Contents>) { //-> 
             }
         });
     });
-    //Err(error::NoContentError{})
 }

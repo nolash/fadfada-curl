@@ -30,9 +30,16 @@ use fadfada_curl::{
 use fadfada_curl::validator::ValidatorCollection;
 
 
+fn register_noop<'a>(validators: &mut ValidatorCollection) {
+    let engine = "noop".to_string();
+    use fadfada::validator::NoopValidator;
+    validators.insert(engine, Box::new(NoopValidator{}));
+}
+
 fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>) {
     if plugins.len() == 0 {
-        warn!("no validator plugins detected");
+        warn!("no validator plugins detected, falling back on noop - content will NOT be checked");
+        register_noop(validators);
         return;
     }
     for v in plugins.iter() {
@@ -49,6 +56,9 @@ fn register_plugins<'a>(validators: &mut ValidatorCollection, plugins: Vec<&str>
                 if !r {
                     panic!("Unknown plugin {}", v);
                 }
+            },
+            "noop" => {
+                register_noop(validators);
             },
             _ => {
                 panic!("Unknown plugin {}", v);
